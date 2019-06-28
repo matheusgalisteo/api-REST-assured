@@ -6,21 +6,32 @@ import static org.hamcrest.Matchers.*;
 import java.util.ArrayList;
 
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.sun.xml.internal.ws.client.sei.ResponseBuilder.Body;
 
+import io.restassured.RestAssured;
 import io.restassured.RestAssured.*;
 import io.restassured.internal.path.xml.NodeImpl;
 
 public class UserXMLTest {
+	@BeforeClass
+	public static void setup(){
+	RestAssured.baseURI = "http://restapi.wcaquino.me";
+	//RestAssured.port = 443 para https 80 para localhost;
+	//Este abaixo para alterar por versões
+	//RestAssured.basePath = "/v2";
+	}
+
 	@Test
 	public void devoTrabalharComXML(){
-		given()
+		given().log().all()
 		.when()
-			.get("http://restapi.wcaquino.me/usersXML/3")
+			.get("/usersXML/3")
 		.then()
-			.statusCode(200)
+			.statusCode (200)
 			.rootPath("user")
 			.body("name", is("Ana Julia"))
 			//para XML que usa atributos é necessário referencia-los com o @, sendo um atributo
@@ -34,13 +45,13 @@ public class UserXMLTest {
 			.appendRootPath("filhos")
 			.body("name", hasItem("Luizinho"))
 		    .body("name", hasItems("Luizinho","Zezinho"))
-		;
+		 	;
 	}
 	@Test
 	public void devoPesquisasAvancadasComXML(){
 		given()
 		.when()
-			.get("http://restapi.wcaquino.me/usersXML")
+			.get("/usersXML")
 		.then()
 			.statusCode(200)
 			.body("users.user.size()", is(3))
@@ -62,7 +73,7 @@ public class UserXMLTest {
 		ArrayList<NodeImpl> nomes = given()
 		//String nome = given()
 		.when()
-			.get("http://restapi.wcaquino.me/usersXML")
+			.get("/usersXML")
 		.then()
 			.statusCode(200)
 			.extract().path("users.user.name.findAll{it.toString().contains('n')}")
@@ -78,7 +89,7 @@ public class UserXMLTest {
     	
 		given()
 		.when()
-			.get("http://restapi.wcaquino.me/usersXML")
+			.get("/usersXML")
 		.then()
 			.statusCode(200)
 			.body(hasXPath("count(/users/user)", is("3")))
@@ -94,6 +105,7 @@ public class UserXMLTest {
 			.body(hasXPath("/users/user[2]/name", is("Maria Joaquina")))
 			.body(hasXPath("/users/user[last()]/name", is("Ana Julia")))
 			.body(hasXPath("count(/users/user/name[contains(.,'n')])", is("2")))
+			//2 abaixo são iguais
 			.body(hasXPath("//user[age < 24]/name", is("Ana Julia")))
 			.body(hasXPath("//user[age > 20] [age < 30]/name", is("Maria Joaquina")))
 			

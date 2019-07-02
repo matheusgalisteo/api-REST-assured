@@ -14,24 +14,46 @@ import com.sun.xml.internal.ws.client.sei.ResponseBuilder.Body;
 
 import io.restassured.RestAssured;
 import io.restassured.RestAssured.*;
+import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.builder.ResponseSpecBuilder;
+import io.restassured.filter.log.LogDetail;
 import io.restassured.internal.path.xml.NodeImpl;
+import io.restassured.specification.RequestSpecification;
+import io.restassured.specification.ResponseSpecification;
 
 public class UserXMLTest {
+	public static RequestSpecification reqSpec;
+	public static ResponseSpecification resSpec;
+	
+	
 	@BeforeClass
 	public static void setup(){
 	RestAssured.baseURI = "http://restapi.wcaquino.me";
 	//RestAssured.port = 443 para https 80 para localhost;
 	//Este abaixo para alterar por versões
 	//RestAssured.basePath = "/v2";
+	RequestSpecBuilder reqBuilder = new RequestSpecBuilder();
+	reqBuilder.log(LogDetail.ALL);
+	reqSpec = reqBuilder.build();
+	
+	ResponseSpecBuilder resBuilder = new ResponseSpecBuilder();
+	resBuilder.expectStatusCode(2200);
+	resSpec = resBuilder.build();
+	
+	RestAssured.requestSpecification = reqSpec;
+	RestAssured.responseSpecification = resSpec;
+	
 	}
 
 	@Test
 	public void devoTrabalharComXML(){
-		given().log().all()
+
+		
+		given()
 		.when()
 			.get("/usersXML/3")
 		.then()
-			.statusCode (200)
+			//.statusCode (200)
 			.rootPath("user")
 			.body("name", is("Ana Julia"))
 			//para XML que usa atributos é necessário referencia-los com o @, sendo um atributo
@@ -53,7 +75,6 @@ public class UserXMLTest {
 		.when()
 			.get("/usersXML")
 		.then()
-			.statusCode(200)
 			.body("users.user.size()", is(3))
 			//Para XML todos valores são strings
 			.body("users.user.findAll{it.age.toInteger() <= 25}.size()", is(2))

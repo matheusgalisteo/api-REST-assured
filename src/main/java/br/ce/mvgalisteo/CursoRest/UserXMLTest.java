@@ -37,7 +37,7 @@ public class UserXMLTest {
 	reqSpec = reqBuilder.build();
 	
 	ResponseSpecBuilder resBuilder = new ResponseSpecBuilder();
-	resBuilder.expectStatusCode(2200);
+	resBuilder.expectStatusCode(200);
 	resSpec = resBuilder.build();
 	
 	RestAssured.requestSpecification = reqSpec;

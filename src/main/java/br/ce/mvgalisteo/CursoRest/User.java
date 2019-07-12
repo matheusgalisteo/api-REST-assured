@@ -1,9 +1,21 @@
 package br.ce.mvgalisteo.CursoRest;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+
+//deveSalvarUsuarioXMLUsandoObjeto() em verbosRest
+@XmlRootElement(name= "user")
+@XmlAccessorType(XmlAccessType.FIELD)
+
 public class User {
 	private String name;
 	private int age;
 	private Double salary;
+	
+	public User(){
+		//Necessário para salvar um usuario XML usando um Objeto
+	}
 	
 	public User(String name, int age) {
 		super();

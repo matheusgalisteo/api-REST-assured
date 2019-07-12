@@ -9,6 +9,8 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 
+import io.restassured.http.ContentType;
+
 public class VerbosTest {
 	@Test
 	public void deveSalvarUsuario(){
@@ -194,6 +196,61 @@ public class VerbosTest {
 		System.out.println(usuarioInserido);
 		Assert.assertEquals("Usuario deserializado", usuarioInserido.getName());
 		Assert.assertThat(usuarioInserido.getAge(), is(35));
+	}
+	
+	@Test
+	public void deveSalvarUsuarioXMLUsandoObjeto(){
+		User user = new User("Usuario XML", 40);
+		
+		given()
+			.log().all() //ver a requisição que estou mandando
+			.contentType("application/xml") //.contentType(ContentType.XML) <- mais indicado//dizendo que meu objeto deve ser interpretado como objeto json
+			.body(user)
+		.when()
+			.post("https://restapi.wcaquino.me/usersXML")
+		.then()
+			.log().all()
+			.statusCode(201)
+			//.body("id", is(NotNullValue()))
+			.body("user.name", is("Usuario XML"))
+			.body("user.age", is("40"))
+		;
+	}
+	
+	@Test
+	public void deveSerializarXMLSalvarUsuario(){
+		User user = new User("Usuario XML", 40);
+		
+		given()
+			.log().all() //ver a requisição que estou mandando
+			.contentType(ContentType.XML) //.contentType(ContentType.XML) <- mais indicado//dizendo que meu objeto deve ser interpretado como objeto json
+			.body(user)
+		.when()
+			.post("https://restapi.wcaquino.me/usersXML")
+		.then()
+			.log().all()
+			.statusCode(201)
+			.extract().body().as(User.class)
+			
+		;
+	}
+	@Test
+	public void deveDeserializarXMLSalvarUsuario(){
+		User user = new User("Usuario XML", 40);
+		
+		User usuarioInserido = given()
+			.log().all() //ver a requisição que estou mandando
+			.contentType(ContentType.XML) //.contentType(ContentType.XML) <- mais indicado//dizendo que meu objeto deve ser interpretado como objeto json
+			.body(user)
+		.when()
+			.post("https://restapi.wcaquino.me/usersXML")
+		.then()
+			.log().all()
+			.statusCode(201)
+			.extract().body().as(User.class)
+			
+		;
+		System.out.println(usuarioInserido);
 	}
 	
 }

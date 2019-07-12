@@ -3,15 +3,11 @@ package br.ce.mvgalisteo.CursoRest;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
 
-import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
-import org.hamcrest.Matchers.*;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.junit.Assert;
 import org.junit.Test;
-
-import com.sun.istack.internal.NotNull;
-
-import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
 
 public class VerbosTest {
 	@Test
@@ -30,6 +26,9 @@ public class VerbosTest {
 			.body("age", is(50))
 		;
 	}
+	
+	
+	
 	@Test
 	public void naoDeveSalvarUsuarioSemNome() {
 		given()
@@ -138,6 +137,63 @@ public class VerbosTest {
 			.statusCode(400)
 			.body("error", is("Registro inexistente"))
 		;
+	}
+	@Test
+	public void deveSalvarUsuarioUsandoMAP(){//Lista que armazena pares
+		Map<String, Object> params = new HashMap<String, Object>();
+		
+		params.put("name", "Usuario via map");
+		params.put("age", 25);
+		given()
+			.log().all() //ver a requisição que estou mandando
+			.contentType("application/json") //dizendo que meu objeto deve ser interpretado como objeto json
+			.body(params)
+		.when()
+			.post("https://restapi.wcaquino.me/users")
+		.then()
+			.log().all()
+			.statusCode(201)
+			//.body("id", is(NotNullValue()))
+			.body("name", is("Usuario via map"))
+			.body("age", is(25))
+		;
+	}
+	
+	@Test
+	public void deveSalvarUsuarioUsandoObjeto(){//mudando a forma de envio passando objeto ao invés de um map
+		User user = new User("Usuario via objeto", 35);
+		
+		given()
+			.log().all() //ver a requisição que estou mandando
+			.contentType("application/json") //dizendo que meu objeto deve ser interpretado como objeto json
+			.body(user)
+		.when()
+			.post("https://restapi.wcaquino.me/users")
+		.then()
+			.log().all()
+			.statusCode(201)
+			//.body("id", is(NotNullValue()))
+			.body("name", is("Usuario via objeto"))
+			.body("age", is(35))
+		;
+	}
+	@Test
+	public void deveDeserializarObjetoAoSalvarUsuario(){//Lista que armazena pares
+		User user = new User("Usuario deserializado", 35);
+		User usuarioInserido = given()
+			.log().all() //ver a requisição que estou mandando
+			.contentType("application/json") //dizendo que meu objeto deve ser interpretado como objeto json
+			.body(user)
+		.when()
+			.post("https://restapi.wcaquino.me/users")
+		.then()
+			.log().all()
+			.statusCode(201)
+			.extract().body().as(User.class)
+		;
+		System.out.println(usuarioInserido);
+		Assert.assertEquals("Usuario deserializado", usuarioInserido.getName());
+		Assert.assertThat(usuarioInserido.getAge(), is(35));
 	}
 	
 }

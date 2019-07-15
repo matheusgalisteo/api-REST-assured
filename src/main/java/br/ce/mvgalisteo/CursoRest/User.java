@@ -2,6 +2,7 @@ package br.ce.mvgalisteo.CursoRest;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 //deveSalvarUsuarioXMLUsandoObjeto() em verbosRest
@@ -9,6 +10,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 
 public class User {
+	@XmlAttribute
+	private long id;
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
 	private String name;
 	private int age;
 	private Double salary;
@@ -21,7 +31,6 @@ public class User {
 		super();
 		this.name = name;
 		this.age = age;
-		this.salary = salary;
 	}
 	public String getName() {
 		return name;

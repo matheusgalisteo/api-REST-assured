@@ -1,13 +1,15 @@
 package br.ce.mvgalisteo.CursoRest;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import com.sun.istack.internal.NotNull;
 
 import io.restassured.http.ContentType;
 
@@ -23,7 +25,7 @@ public class VerbosTest {
 		.then()
 			.log().all()
 			.statusCode(201)
-			//.body("id", is(NotNullValue()))
+			.body("id", is(notNullValue()))
 			.body("name", is("Jose"))
 			.body("age", is(50))
 		;
@@ -43,8 +45,8 @@ public class VerbosTest {
 				.log().all()
 				.statusCode(400)
 				.body("error", is("Name é um atributo obrigatório"))
-				//.body("id", is(nullValue()))
-				//.body("name", is("Jose")).body("age", is(50));
+				.body("id", is(nullValue()))
+				.body("name", is("Jose")).body("age", is(50));
 				;
 	
 	}
@@ -59,7 +61,7 @@ public class VerbosTest {
 		.then()
 			.log().all()
 			.statusCode(201)
-			//.body("id", is(NotNullValue()))
+			.body("id", is(notNullValue()))
 			.body("user.name", is("Jose"))
 			.body("user.age", is("50"))
 		;
@@ -155,7 +157,7 @@ public class VerbosTest {
 		.then()
 			.log().all()
 			.statusCode(201)
-			//.body("id", is(NotNullValue()))
+			.body("id", is(notNullValue()))
 			.body("name", is("Usuario via map"))
 			.body("age", is(25))
 		;
@@ -174,7 +176,7 @@ public class VerbosTest {
 		.then()
 			.log().all()
 			.statusCode(201)
-			//.body("id", is(NotNullValue()))
+			.body("id", is(notNullValue()))
 			.body("name", is("Usuario via objeto"))
 			.body("age", is(35))
 		;
@@ -211,7 +213,7 @@ public class VerbosTest {
 		.then()
 			.log().all()
 			.statusCode(201)
-			//.body("id", is(NotNullValue()))
+			.body("id", is(notNullValue()))
 			.body("user.name", is("Usuario XML"))
 			.body("user.age", is("40"))
 		;
@@ -247,10 +249,12 @@ public class VerbosTest {
 		.then()
 			.log().all()
 			.statusCode(201)
-			.extract().body().as(User.class)
+			.extract().body().as(User.class)//extraindo para objeto é necessário add esse objeto linha 241 User usuarioInserido = given()
 			
 		;
-		System.out.println(usuarioInserido);
+		Assert.assertThat(usuarioInserido.getId(), notNullValue());
+		Assert.assertThat(usuarioInserido.getName(), is("Usuario XML"));
+		Assert.assertThat(usuarioInserido.getAge(), is(40));
 	}
 	
 }

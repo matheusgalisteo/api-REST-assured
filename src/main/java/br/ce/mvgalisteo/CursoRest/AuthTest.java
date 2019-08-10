@@ -6,10 +6,8 @@ import static org.hamcrest.Matchers.*;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.hamcrest.Matchers;
 import org.junit.Test;
 
-import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 
 public class AuthTest {
